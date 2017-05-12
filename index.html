@@ -1,0 +1,55 @@
+---
+layout: default
+---
+<div id="home" class="page-content wc-container">
+	<div class="posts">
+  		{% for post in paginator.posts %}
+  			<div class="post">
+    			<h3 class="post-title">
+			      <a href="{{ post.url | prepend: site.baseurl | prepend: site.url }}">
+			        {{ post.title }}
+			      </a>
+    			</h3>
+
+                <p class="post-meta">  
+                <span class="date">{{ post.date | date: "%b %-d, %Y" }}</span>
+                <span class="categories">
+                     {% if post.categories.size > 0 %}|  {{ post.categories | array_to_sentence_string }}{% endif %}
+                </span>
+                </p>
+                
+                <p>{{ post.content | strip_html | strip_newlines | truncatewords: 35 }}</p>
+  				
+  				<p>
+  				<a href="{{ post.url | prepend: site.baseurl | prepend: site.url }}" title="{{ post.title}}">Read More</a>
+  				</p>
+
+            </div>
+  		{% endfor %}
+	</div>
+	<div class="post-footer">
+        <div class="column-1">
+        {% if paginator.previous_page %}
+            {% if paginator.previous_page == 1 %}
+            <a href="{{ site.url }}"><< Older</a>
+		    {% else %}
+            <a href="{{ site.url }}/page{{ paginator.previous_page }}"><< Older</a>
+            {% endif %}
+        {% else %}
+            <span><< Older</span>
+        {% endif %}
+        </div>
+        
+        <div class="column-2">
+            Page {{ paginator.page }} of {{ paginator.total_pages }}
+		</div>
+		
+        <div class="column-3">
+        {% if paginator.next_page %}
+            <a href="{{ site.url }}/page{{ paginator.next_page }}">Newer >></a>
+        {% else %}
+            <span>Newer >></span>
+        {% endif %}
+        </div>
+	</div>
+</div>
