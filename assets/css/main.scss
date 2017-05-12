@@ -139,12 +139,16 @@ img {
 
 
 hr {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
   border: 0;
-  border-top: 1px solid #eee;
+  border-top: 2px solid #eee;
   height: 0;
-  width: 270px;
+}
+
+.small {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 270px;
 }
 
 
@@ -757,4 +761,10 @@ th {
 tbody tr:nth-child(odd) td,
 tbody tr:nth-child(odd) th {
   background-color: $base-05;
+}
+
+
+div.comments {
+    padding-top: 30px;
+    padding-bottom: 40px;
 }

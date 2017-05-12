@@ -25,7 +25,7 @@ paginate: 3
 paginate_path: "page:num"
 
 disqus: true
-disqus_shortname: blog_chinmoyrp.discus.com
+disqus_shortname: blog-chinmoyrp-com
 
 exclude: 
   - CNAME

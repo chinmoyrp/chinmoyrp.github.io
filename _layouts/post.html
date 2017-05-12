@@ -35,9 +35,13 @@ layout: default
 		    {% endfor %}
 		</ul>
 	</div>
-	{% endif %}
-	
+	{% endif%}
+	<hr></hr>
+	<div class="comments">
+	{% if site.disqus_shortname %}
     {% include disqus.html %}
+    {% endif %}
+    </div>
 
 	<div class="post-footer">
 		<div class="column-1">
