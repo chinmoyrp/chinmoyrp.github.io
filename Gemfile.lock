@@ -164,7 +164,6 @@ GEM
     minima (2.1.1)
       jekyll (~> 3.3)
     minitest (5.10.2)
-    multi_json (1.12.1)
     multipart-post (2.0.0)
     net-dns (0.8.0)
     nokogiri (1.7.2)
@@ -174,8 +173,6 @@ GEM
     pathutil (0.14.0)
       forwardable-extended (~> 2.6)
     public_suffix (2.0.5)
-    pygments.rb (1.1.2)
-      multi_json (>= 1.0.0)
     rake (12.0.0)
     rb-fsevent (0.9.8)
     rb-inotify (0.9.8)
@@ -201,7 +198,7 @@ PLATFORMS
 DEPENDENCIES
   github-pages (= 136)
   jekyll-paginate
-  pygments.rb
+  json
   rake
 
 BUNDLED WITH
