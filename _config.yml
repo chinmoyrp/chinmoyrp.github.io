@@ -5,7 +5,7 @@ harmony:
   basetheme: theme-base-01 # pre defined thmes are darken, blue-water, redish.
 
   # Google Analytics key, leave blank to ignore
-  google_analytics_key: UA-xxxx-x
+  google_analytics_key: UA-99014184-1
 
   # Profile links, leave blank to ignore
   social: 
