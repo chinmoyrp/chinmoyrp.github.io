@@ -70,26 +70,33 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.6;
 }
 
+#blog-title {
+  @include font-size(25px);
+  @include MQ(M) {
+    @include font-size(45px);
+  }
+}
+
 h1 {
   // mobile first
   @include font-size(20px);
   @include MQ(M) {
-    @include font-size(36px);
+    @include font-size(34px);
   }
 }
 
 h2 {
   // mobile first
-  @include font-size(18px);
+  @include font-size(15px);
   @include MQ(M) {
-    @include font-size(31px);
+    @include font-size(30px);
   }
 }
 
 h3 {
   @include font-size(15px);
   @include MQ(M) {
-    @include font-size(30px);
+    @include font-size(28px);
   }
 }
 
@@ -205,7 +212,7 @@ header.main-header {
   h1, h2 { 
       text-align: center; 
       color: inherit;
-      padding-bottom: 20px;
+      padding-bottom: 25px;
   }
   a { 
     color: inherit;
@@ -238,8 +245,9 @@ header.main-header {
     border-bottom: 2px transparent solid;
     padding-bottom: 5px;
     @include transition(all, .2s);
+    @include font-size(12px);
     @include MQ(M) {
-      @include font-size(18px);
+      @include font-size(17px);
     }
     &:hover, &:focus, &:active {
       border-bottom-color: inherit;
