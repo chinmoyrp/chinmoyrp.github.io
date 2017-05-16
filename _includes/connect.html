@@ -1,0 +1,26 @@
+
+<div class="column one">
+ <h6 class>Follow me</h6>
+
+ <ul class="connect">
+    {% if site.harmony.social.github %}
+    <li>
+        <a title="{{ site.harmony.social.github }} on Github" 
+            href="https://github.com/{{ site.harmony.social.github }}" 
+            class="github wc-img-replace" target="_blank">Github</a>
+    </li>
+    {% endif %} 
+ </ul>
+</div>
+
+<div class="column two">
+ <h6 class>Subscribe</h6>
+
+ <ul class="connect">
+    <li>
+        <a title="Atom feed" 
+            href="{{ site.baseurl }}/feed.xml" 
+            class="atom wc-img-replace" target="_blank">Atom feed</a>
+    </li>
+ </ul>
+</div>
