@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Polkit Support in KIO - Final Status
-category: gsoc kde
+category: gsoc
 ---
 
 In this post I intend report the final status of my GSoC project (obviously).

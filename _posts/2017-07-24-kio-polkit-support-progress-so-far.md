@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Polkit Support in KIO - Progess so far 
-category: gsoc kde
+category: gsoc
 ---
 
 It has been more than a month since I last blogged. This is not really a good situation. Nevertheless, for the remaining period of GSOC I will try to be more regular.

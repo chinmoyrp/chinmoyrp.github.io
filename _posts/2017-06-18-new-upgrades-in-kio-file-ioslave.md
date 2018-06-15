@@ -1,7 +1,7 @@
 ---
 layout: post
 title: New updates in KIO file ioslave
-category: gsoc kde
+category: gsoc
 ---
 KIO Slaves are out-of-process worker applications that perform protocol-specific communications. To provide local file handling file managers use the file ioslave(file:/). Up until now file management with root access was forbidden in file ioslave. But with this week's work situation might just change for good. 
 
