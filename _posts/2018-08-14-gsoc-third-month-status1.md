@@ -1,7 +1,7 @@
 ---
 layout: post1
 title: GSoC 2018 - Third month status
-category: draft
+category: gsoc kde
 --- 
 
 Hi All,
