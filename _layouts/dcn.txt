@@ -1,0 +1,704 @@
+set ns [new Simulator]
+set tf [open lab1.tr w]
+$ns trace-all $tf
+set nf [open lab1.nam w ]
+$ns namtrace-all $nf
+set n0 [$ns node]
+set n1 [$ns node]
+set n2 [$ns node]
+set n3 [$ns node]
+# The below code is used to set the color and name's to the nodes.
+$ns color 1 "red"
+$ns color 2 "blue"
+$n0 label "Source/TCP"
+$n1 label "Source/UDP"
+$n2 label "Router"
+$n3 label "Destination"
+$ns duplex-link $n0 $n2 100Mb 1ms DropTail
+$ns duplex-link $n1 $n2 100Mb 1ms DropTail
+$ns duplex-link $n2 $n3 100Mb 1ms DropTail
+# The below code is used to set the color and labels to the links.
+$ns duplex-link-op $n0 $n2 color "green"
+$ns duplex-link-op $n0 $n2 label "from 0-2"
+$ns duplex-link-op $n1 $n2 color "green"
+$ns duplex-link-op $n1 $n2 label "from 1-2"
+$ns duplex-link-op $n2 $n3 color "green"
+$ns duplex-link-op $n2 $n3 label "from 2-3" 
+
+# The below code is used create TCP and UDP agents and the 
+# traffic ftp & cbr respectively.
+set tcp0 [new Agent/TCP]
+$ns attach-agent $n0 $tcp0
+set ftp0 [new Application/FTP]
+$ftp0 attach-agent $tcp0
+set sink3 [new Agent/TCPSink]
+$ns attach-agent $n3 $sink3
+set udp1 [new Agent/UDP]
+$ns attach-agent $n1 $udp1
+set cbr1 [new Application/Traffic/CBR]
+$cbr1 attach-agent $udp1
+set null3 [new Agent/Null]
+$ns attach-agent $n3 $null3
+#The below code is used to set the packet size of ftp and udp.
+$ftp0 set packetSize_ 500
+$ftp0 set interval_ 0.001
+#The below code is used set the data rate
+$cbr1 set packetSize_ 500
+$cbr1 set interval_ 0.001
+#This code is used give a color red->tcp and blue ->udp.
+$tcp0 set class_ 1
+$udp1 set class_ 2
+# The below code is used connect the agents.
+$ns connect $tcp0 $sink3
+$ns connect $udp1 $null3
+proc finish { } {
+global ns nf tf
+$ns flush-trace
+exec nam lab1.nam &
+close $nf
+close $tf
+exit 0
+}
+$ns at 0.1 "$cbr1 start"
+$ns at 0.2 "$ftp0 start"
+$ns at 5.0 "finish"
+$ns run
+
+***awk****
+BEGIN{
+tcp=0;
+udp=0;
+}
+{
+if($1=="r"&&$3=="2"&&$4=="3"&& $5=="tcp")
+tcp++;
+if($1=="r"&&$3=="2"&&$4=="3"&&$5=="cbr")
+udp++;
+}
+END{
+printf("\n Total number of packets sent by TCP : %d\n",tcp);
+printf(
+
+
+
+======
+set ns [new Simulator]
+set tf [open lan.tr w]
+$ns trace-all $tf
+set nf [open lan.nam w]
+$ns namtrace-all $nf
+set n0 [$ns node]
+set n1 [$ns node]
+set n2 [$ns node]
+
+set n3 [$ns node]
+set n4 [$ns node]
+set n5 [$ns node]
+$ns color 1 "blue"
+$n1 label "Source"
+$n2 label "Error node"
+$n5 label "Destination"
+#The below code is used to create two Lans (Lan1 and Lan2).
+$ns make-lan "$n0 $n1 $n2" 10Mb 10ms LL Queue/DropTail Mac/802_3
+$ns make-lan "$n3 $n4 $n5" 10Mb 10ms LL Queue/DropTail Mac/802_3
+# connect node n2 and n4
+$ns duplex-link $n2 $n4 100Mb 10ms DropTail
+$ns duplex-link-op $n2 $n4 color "green"
+set udp1 [new Agent/UDP]
+$ns attach-agent $n1 $udp1
+set cbr1 [new Application/Traffic/CBR]
+$cbr1 attach-agent $udp1
+set null5 [new Agent/Null]
+$ns attach-agent $n5 $null5
+$ns connect $udp1 $null5
+#data rate- change this to change the data rate
+$cbr1 set packetSize_ 1000
+$cbr1 set interval_ 0.001
+$udp1 set class_ 1
+# The below code is used to add an error model between the nodes n2 and n4.
+set err [new ErrorModel]
+$ns lossmodel $err $n2 $n4
+$err set rate_ 0.1
+proc finish {} {
+global ns tf nf
+$ns flush-trace
+exec nam lan.nam &
+close $tf
+close $nf
+exit 0
+}
+$ns at 6.0 "finish"
+$ns at 0.1 "$cbr1 start"
+$ns run
+
+
+**awk2**
+BEGIN{
+pkt=0;
+time=0;
+}
+{
+if($1=="r"&& $9=="1.0" && $10=="5.0")
+{
+pkt=pkt+$6;
+time=$2;
+}
+}
+END{
+printf("Throughput: %fMbps \n\n",(pkt/time)*(8/1000000));
+}
+
+
+===
+set ns [new Simulator]
+set tf [open wireless.tr w]
+$ns trace-all $tf
+set topo [new Topography]
+$topo load_flatgrid 700 700
+set nf [open wireless.nam w]
+$ns namtrace-all-wireless $nf 700 700
+$ns node-config -adhocRouting DSDV\
+-llType LL\
+-ifqType Queue/DropTail\
+-macType Mac/802_11\
+-ifqLen 50 \
+-phyType Phy/WirelessPhy\
+-channelType Channel/WirelessChannel\
+-propType Propagation/TwoRayGround\
+-antType Antenna/OmniAntenna\
+-topoInstance $topo\
+-agentTrace ON\
+-routerTrace ON
+create-god 4
+set n0 [$ns node]
+set n1 [$ns node]
+set n2 [$ns node]
+set n3 [$ns node]
+$n0 label "tcp0"
+$n1 label "sink1"
+$n2 label "tcp1"
+$n3 label "sink2"
+#The below code is used to give the initial node positions.
+$n0 set X_ 50
+$n0 set Y_ 50
+$n0 set Z_ 0
+$n1 set X_ 200
+$n1 set Y_ 200
+$n1 set Z_ 0
+$n2 set X_ 400
+$n2 set Y_ 400
+$n2 set Z_ 0
+$n3 set X_ 600
+$n3 set Y_ 600
+$n3 set Z_ 0
+$ns at 0.1 "$n0 setdest 50 50 15"
+$ns at 0.1 "$n1 setdest 200 200 25"
+$ns at 0.1 "$n2 setdest 400 400 25"
+$ns at 0.1 "$n3 setdest 600 600 25"
+set tcp0 [new Agent/TCP]
+$ns attach-agent $n0 $tcp0
+set ftp0 [new Application/FTP]
+$ftp0 attach-agent $tcp0
+set sink1 [new Agent/TCPSink]
+$ns attach-agent $n1 $sink1
+$ns connect $tcp0 $sink1
+set tcp1 [new Agent/TCP]
+$ns attach-agent $n2 $tcp1
+set ftp1 [new Application/FTP]
+$ftp1 attach-agent $tcp1
+set sink2 [new Agent/TCPSink]
+$ns attach-agent $n3 $sink2
+$ns connect $tcp1 $sink2
+$ns at 5 "$ftp0 start"
+$ns at 10 "$ftp1 start"
+#The below code is used to give node movements .
+$ns at 100 "$n2 setdest 500 500 25"
+proc finish {} {
+global nf ns tf
+$ns flush-trace
+exec nam wireless.nam &
+close $tf
+exit 0
+}
+$ns at 250 "finish"
+$ns run
+
+**awk3***
+BEGIN{
+count1=0
+count2=0
+pack1=0
+pack2=0
+time1=0
+time2=0
+}
+{
+if($1=="r" && $3=="_1_" && $4=="AGT")
+{
+count1++
+pack1=pack1+$8
+time1=$2
+}
+if($1=="r" && $3=="_3_" && $4=="AGT")
+{
+count2++
+pack2=pack2+$8
+time2=$2
+}
+}
+END{
+printf(" The Throughput from n0 to n1:
+%fMbps\n",((count1*pack1*8)/(time1*1000000)))
+printf(" The Throughput from n2 to n3:
+%fMbps\n",((count2*pack2*8)/(time2*1000000)))
+}
+
+
+===
+set ns [new Simulator ]
+set tf [open labping.tr w]
+$ns trace-all $tf
+set nf [open labping.nam w]
+$ns namtrace-all $nf
+set n0 [$ns node]
+set n1 [$ns node]
+set n2 [$ns node]
+set n3 [$ns node]
+set n4 [$ns node]
+set n5 [$ns node]
+set n6 [$ns node]
+$n0 label "Ping0"
+$n2 label "Router"
+$n4 label "Ping4"
+$n5 label "Ping5"
+$n6 label "Ping6"
+$ns color 1 "red"
+$ns color 2 "blue"
+$ns duplex-link $n0 $n2 100Mb 300ms DropTail
+$ns duplex-link $n2 $n6 1Mb 300ms DropTail
+$ns duplex-link $n5 $n2 100Mb 300ms DropTail
+$ns duplex-link $n2 $n4 1Mb 300ms DropTail
+$ns duplex-link $n3 $n2 1Mb 300ms DropTail
+$ns duplex-link $n1 $n2 1Mb 300ms DropTail
+$ns queue-limit $n0 $n2 5
+$ns queue-limit $n2 $n6 2
+$ns queue-limit $n2 $n4 3
+$ns queue-limit $n5 $n2 5
+set ping0 [new Agent/Ping ]
+$ns attach-agent $n0 $ping0
+set ping4 [new Agent/Ping ]
+$ns attach-agent $n4 $ping4
+set ping5 [new Agent/Ping ]
+$ns attach-agent $n5 $ping5
+set ping6 [new Agent/Ping ]
+$ns attach-agent $n6 $ping6
+$ping0 set packetSize_ 50000
+$ping0 set interval_ 0.0001
+$ping5 set packetSize_ 50000
+$ping5 set interval_ 0.0001
+$ping0 set class_ 1
+$ping5 set class_ 2
+$ns connect $ping0 $ping4
+$ns connect $ping5 $ping6
+Agent/Ping instproc recv {from rtt} {
+$self instvar node_
+puts "The node [$node_ id] received a reply from $from with the round trip time of $rtt"
+}
+$ns at 0.1 "$ping0 send"
+$ns at 0.2 "$ping0 send"
+$ns at 0.3 "$ping0 send"
+$ns at 0.4 "$ping0 send"
+$ns at 0.5 "$ping0 send"
+$ns at 0.6 "$ping0 send"
+$ns at 0.7 "$ping0 send"
+$ns at 0.8 "$ping0 send"
+$ns at 0.9 "$ping0 send"
+$ns at 1.0 "$ping0 send"
+$ns at 1.1 "$ping0 send"
+$ns at 1.2 "$ping0 send"
+$ns at 1.3 "$ping0 send"
+$ns at 1.4 "$ping0 send"
+$ns at 1.5 "$ping0 send"
+$ns at 1.6 "$ping0 send"
+$ns at 1.7 "$ping0 send"
+$ns at 1.8 "$ping0 send"
+$ns at 1.9 "$ping0 send"
+$ns at 0.1 "$ping5 send"
+$ns at 0.2 "$ping5 send"
+$ns at 0.3 "$ping5 send"
+$ns at 0.4 "$ping5 send"
+$ns at 0.5 "$ping5 send"
+$ns at 0.6 "$ping5 send"
+$ns at 0.7 "$ping5 send"
+$ns at 0.8 "$ping5 send"
+$ns at 0.9 "$ping5 send"
+$ns at 1.0 "$ping5 send"
+$ns at 1.1 "$ping5 send"
+$ns at 1.2 "$ping5 send"
+$ns at 1.3 "$ping5 send"
+$ns at 1.4 "$ping5 send"
+$ns at 1.5 "$ping5 send"
+$ns at 1.6 "$ping5 send"
+$ns at 1.7 "$ping5 send"
+$ns at 1.8 "$ping5 send"
+$ns at 1.9 "$ping5 send"
+$ns at 0.1 "$ping5 send"
+$ns at 0.2 "$ping5 send"
+$ns at 0.3 "$ping5 send"
+$ns at 0.4 "$ping5 send"
+$ns at 0.5 "$ping5 send"
+$ns at 0.6 "$ping5 send"
+$ns at 0.7 "$ping5 send"
+$ns at 0.8 "$ping5 send"
+$ns at 0.9 "$ping5 send"
+$ns at 1.0 "$ping5 send"
+$ns at 1.1 "$ping5 send"
+$ns at 1.2 "$ping5 send"
+$ns at 1.3 "$ping5 send"
+$ns at 1.4 "$ping5 send"
+$ns at 1.5 "$ping5 send"
+$ns at 1.6 "$ping5 send"
+$ns at 1.7 "$ping5 send"
+$ns at 1.8 "$ping5 send"
+$ns at 1.9 "$ping5 send"
+proc finish {} {
+global ns nf tf
+exec nam labping.nam &
+$ns flush-trace
+close $tf
+close $nf
+exit 0
+}
+$ns at 5.0 "finish"
+$ns run
+BEGIN
+{ count=0;
+}
+{
+if($1=="d")
+count++
+}
+END{
+printf("The Total no of Packets Dropped due to Congestion:%d, count);
+}
+
+
+
+
+
+
+
+***************************
+
+
+
+
+CRC
+
+#include<stdio.h>
+#include<string.h>
+#include<conio.h>
+#define N strlen(g)
+char t[128], cs[128], g[]="10001000000100001";
+int a, e, c;
+void xor() {
+ for(c=1;c<N;c++) cs[c]=((cs[c]==g[c])?'0':'1');
+}
+void crc() {
+ for(e=0;e<N;e++) cs[e]=t[e];
+ do {
+ if(cs[0]=='1') xor();
+ for(c=0;c<N-1;c++) cs[c]=cs[c+1];
+ cs[c]=t[e++];
+ }while(e<=a+N-1);
+}
+
+void main() {
+ clrscr();
+ printf("\nEnter poly : "); scanf("%s",t);
+ printf("\nGenerating Polynomial is : %s",g);
+ a=strlen(t);
+ for(e=a;e<a+N-1;e++) t[e]='0';
+ printf("\nModified t[u] is : %s",t);
+ crc();
+ printf("\nChecksum is : %s",cs);
+ for (e=a;e<a+N-1;e++) t[e]=cs[e-a];
+ printf("\nFinal Codeword is : %s",t);
+ printf("\nTest Error detection 0(yes) 1(no) ? : ");
+ scanf("%d",&e);
+ if (e==0) {
+ printf("Enter position where error is to inserted : ");
+ scanf("%d",&e);
+ t[e]=(t[e]=='0')?'1':'0';
+ printf("Errorneous data : %s\n",t);
+ }
+ crc();
+ for (e=0;(e<N-1)&&(cs[e]!='1');e++);
+ if (e<N-1) printf("Error detected.");
+ else printf("No Error Detected.");
+ getch();
+ }
+ 
+ =====
+ 
+ 
+ dist vector
+ 
+ #include<stdio.h>
+struct node
+{
+unsigned dist[20];
+unsigned from[20];
+}rt[10];
+int main()
+{
+int dmat[20][20];
+int n,i,j,k,count=0;
+printf("\n enter the no of nodes\n");
+scanf("%d",&n);
+printf("enter the cost matrix:");
+for(i=0;i<n;i++)
+{
+for(j=0;j<n;j++)
+{
+scanf("%d",&dmat[i][j]);
+dmat[i][i]=0;
+rt[i].dist[j]=dmat[i][j];
+rt[i].from[j]=j;
+}
+}
+do
+{
+count=0;
+for(i=0;i<n;i++)
+for(j=0;j<n;j++)
+for(k=0;k<n;k++)
+{
+if(rt[i].dist[j]>dmat[i][k]+rt[k].dist[j])
+{
+rt[i].dist[j]=rt[i].dist[k]+rt[k].dist[j];
+rt[i].from[j]=k;
+count++;
+}
+}
+}while(count!=0);
+for(i=0;i<n;i++)
+{
+printf("\n state value for router %d is\n",i+1);
+for(j=0;j<n;j++)
+{
+printf("\t \n to node %d via %d,distance=%d\n",j+1,rt[i].from[j]+1,rt[i].dist[j]);
+}
+}
+printf("\n\n");
+return 0;
+}
+
+
+====
+
+leaky buckert
+
+
+#include<stdio.h>
+#include<stdlib.h>
+#define bktsz 700
+int c=0;
+int count=0;
+void bktip(int a,int b,int i)
+{
+if(a>bktsz-c) 
+{
+printf("bucket overflow and non-conforming packet\n");
+}
+else
+{
+sleep(1);
+while(a>b)
+{
+printf("%d bytes outputted\n",b);
+a=a-b;
+sleep(1);
+count++;
+}
+if(a>0)
+{
+c=c+a;
+if(count==0)
+{
+printf("last %d bytes outputted\n",c);
+c=0;
+printf("%d bytes stored\n",c);
+}
+else{ 
+if(c==b)
+{
+printf("%d bytes stored is outputted\n",b);
+c=0;
+}if(c>b)
+{
+printf("%d bytes stored is outputted\n",b);
+c=c-b;
+printf("%d bytes stored\n",c);
+}else
+printf("%d bytes stored\n",c);}
+printf("conforming packet\n");
+}
+}
+if((i==5)&&(c!=0))
+{
+printf("%d bytes stored is outputted\n",c);
+}
+}
+int main()
+{
+int opr,psz,i;
+printf("output rate:\n");
+scanf("%d",&opr);
+for(i=1;i<=5;i++)
+{
+printf("enter the packet size:\n");
+scanf("%d",&psz);
+printf("packet number %d packet size %d\n",i,psz);
+bktip(psz,opr,i);
+}
+} 
+
+
+=====
+
+
+client
+
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+#include<errno.h>
+#include<string.h>
+#include<netdb.h>
+#include<sys/types.h>
+#include<netinet/in.h>
+#include<sys/socket.h>
+#include<fcntl.h>
+#define PORT 6490
+int main()
+{
+int i=0,sockfd,len;
+char buf1[40],buf2[20000];
+FILE* fp;
+struct sockaddr_in their_addr; 
+if((sockfd=socket(AF_INET, SOCK_STREAM,0))==-1)
+{
+perror("socket");
+exit(1);
+}
+their_addr.sin_family=AF_INET;
+their_addr.sin_port=htons(PORT);
+their_addr.sin_addr.s_addr=inet_addr("127.0.0.1");
+memset(&(their_addr.sin_zero), '\0', 8);
+if(connect(sockfd, (struct sockaddr *)&their_addr, sizeof(struct sockaddr))==-1)
+{
+perror("connect");
+exit(1);
+}
+printf("CLIENT is online!\n");
+printf("CLIENT:Enter the filename to be displayed: ");
+scanf("%s",buf1);
+send(sockfd,buf1,sizeof(buf1),0);
+if(recv(sockfd,buf2,sizeof(buf2),0)==1)
+{
+perror("recv");
+exit(1);
+}
+else
+{
+printf("Displyaing the contents of %s",buf1);
+printf("\n%s\n",buf2);
+}
+close(sockfd);
+return 0; 
+}
+
+
+
+
+
+server
+
+
+
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+#include<errno.h>
+#include<string.h>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+#include<netinet/in.h>
+#include<sys/socket.h>
+#include<arpa/inet.h>
+#include<sys/wait.h>
+#include<signal.h>
+#define MYPORT 6490
+#define BACKLOG 10
+int main(void)
+{
+int sockfd,fp,new_fd;
+struct sockaddr_in my_addr,their_addr;
+int sin_size,i=0;
+int yes=1;
+char buf1[20],buf2[20000];
+if((sockfd=socket(AF_INET,SOCK_STREAM,0))==-1)
+{
+perror("socket");
+exit(1);
+}if(setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(int))==-1)
+{
+perror("setsockopt");
+exit(1);
+}
+my_addr.sin_family=AF_INET;
+my_addr.sin_port=htons(MYPORT);
+my_addr.sin_addr.s_addr=INADDR_ANY;
+memset(&(my_addr.sin_zero), '\0', 8);
+if(bind(sockfd,(struct sockaddr *)&my_addr, sizeof(struct sockaddr)) ==-1)
+{
+perror("Bind");
+exit(1);
+}
+if(listen(sockfd, BACKLOG) == -1)
+{
+perror("listen");
+exit(1);
+}
+printf("\n SERVER is online! \n SERVER: Waiting for the client........\n");
+sin_size=sizeof(struct sockaddr_in);
+if((new_fd=accept(sockfd,(struct sockaddr *)&their_addr, &sin_size))==-1)
+{
+perror("Accept");
+exit(0);
+}
+printf("\n SERVER: Got connection from %s \n", inet_ntoa(their_addr.sin_addr));
+recv(new_fd,&buf1,sizeof(buf1),0);
+printf("File requested is %s\n", buf1);
+if((fp=open(buf1,O_RDONLY))<0)
+{
+printf("File not found\n");
+strcpy(buf2,"File not found");
+}
+else
+{
+printf("SERVER: %s found and ready to transfer.\n",buf1);
+read(fp,&buf2,20000);
+close(fp);
+}
+send(new_fd,&buf2,sizeof(buf2),0);
+close(new_fd);
+close(sockfd);
+printf("Transfer success \n");
+printf("\n");
+return 0;
+}
